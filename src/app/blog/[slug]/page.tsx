@@ -99,7 +99,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="prose-custom">{renderContent(post.content)}</div>
 
           {/* Tags */}
-          {post.tags?.length > 0 && (
+          {Array.isArray(post.tags) && post.tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mt-12 pt-8 border-t border-brand-border/50">
               <Tag size={14} className="text-brand-muted" />
               {post.tags?.map(tag => (
