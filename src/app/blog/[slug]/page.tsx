@@ -99,17 +99,20 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="prose-custom">{renderContent(post.content)}</div>
 
           {/* Tags */}
-          {Array.isArray(post.tags) && post.tags.length > 0 && (
+          {Array.isArray(post.tags) && post.tags.length > 0 ? (
             <div className="flex flex-wrap items-center gap-2 mt-12 pt-8 border-t border-brand-border/50">
               <Tag size={14} className="text-brand-muted" />
-              {post.tags?.map(tag => (
-                <span key={tag} className="px-3 py-1 rounded-full text-xs"
-                  style={{ background: 'rgba(255,255,255,0.05)', color: '#8899BB' }}>
-                  #{tag}
+              {post.tags.map((tag: any, index: number) => (
+                <span 
+                  key={typeof tag === 'string' ? tag : (tag?.id || index)} 
+                  className="px-3 py-1 rounded-full text-xs"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: '#8899BB' }}
+                >
+                  #{typeof tag === 'string' ? tag : (tag?.name || 'tag')}
                 </span>
               ))}
             </div>
-          )}
+          ) : null}
         </div>
       </article>
     </SiteLayout>
