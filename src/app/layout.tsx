@@ -76,7 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 };
               })(window, "https://app.cal.com/embed/embed.js", "init");
               Cal("init", { origin: "https://cal.com" });
-              Cal("floatingButton", { calLink: "letsgrowletsgo", buttonText: "Book a Free Consult", buttonColor: "#7c3aed", buttonTextColor: "#ffffff", buttonPosition: "bottom-right" });
+              Cal("floatingButton", { calLink: "letsgrowletsgo?metadata[source]=MaxLifeMD Website", buttonText: "Book a Free Consult", buttonColor: "#7c3aed", buttonTextColor: "#ffffff", buttonPosition: "bottom-right" });
               Cal("ui", { theme: "dark", styles: { branding: { brandColor: "#7c3aed" } } });
             `,
           }}
