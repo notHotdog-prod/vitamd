@@ -4,6 +4,8 @@ import SiteLayout from '@/components/layout/SiteLayout';
 import { useState } from 'react';
 import { Mail, Phone, Clock, Send, CheckCircle } from 'lucide-react';
 
+const WORKER_URL = 'https://kb-leads-proxy.bryan-boutin.workers.dev';
+
 const subjects = [
   'General Inquiry',
   'Longevity Protocol',
@@ -27,10 +29,18 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('loading');
     try {
-      const res = await fetch('/api/contact', {
+      const payload = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        message: form.message,
+        source: 'MaxLifeMD',
+        entryPoint: 'Contact Form',
+      };
+      const res = await fetch(`${WORKER_URL}/lead`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setStatus('success');
@@ -83,7 +93,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="font-display font-bold text-white mb-1">Call Us</h3>
                 <p className="text-sm text-brand-muted mb-2">Mon–Fri, 8AM–7PM EST</p>
-                <a href="tel:+18005551234" className="text-sm text-brand-cyan hover:underline">1-800-555-1234</a>
+                <a href="tel:+17324843000" className="text-sm text-brand-cyan hover:underline">732-484-3000</a>
               </div>
               <div className="card">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
@@ -124,13 +134,13 @@ export default function ContactPage() {
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2">Phone</label>
-                        <input name="phone" type="tel" value={form.phone} onChange={handleChange}
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2">Phone *</label>
+                        <input name="phone" type="tel" required value={form.phone} onChange={handleChange}
                           placeholder="(555) 000-0000" className="input" />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2">Subject *</label>
-                        <select name="subject" required value={form.subject} onChange={handleChange} className="input">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2">Subject</label>
+                        <select name="subject" value={form.subject} onChange={handleChange} className="input">
                           <option value="">Select a topic…</option>
                           {subjects.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
@@ -138,8 +148,8 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2">Message *</label>
-                      <textarea name="message" required rows={6} value={form.message} onChange={handleChange}
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2">Message</label>
+                      <textarea name="message" rows={6} value={form.message} onChange={handleChange}
                         placeholder="Tell us about your health goals and any questions you have…"
                         className="input resize-none" />
                     </div>

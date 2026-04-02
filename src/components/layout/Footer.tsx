@@ -1,7 +1,11 @@
 // src/components/layout/Footer.tsx
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, Facebook, Instagram } from 'lucide-react';
+import { useState } from 'react';
+
+const WORKER_URL = 'https://kb-leads-proxy.bryan-boutin.workers.dev';
 
 const footerLinks = {
   Services: [
@@ -25,6 +29,33 @@ const footerLinks = {
 };
 
 export default function Footer() {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewsletterStatus('loading');
+    try {
+      const res = await fetch(`${WORKER_URL}/newsletter`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: newsletterEmail,
+          source: 'MaxLifeMD - Newsletter',
+        }),
+      });
+      if (res.ok) {
+        setNewsletterStatus('success');
+        setNewsletterEmail('');
+        setTimeout(() => setNewsletterStatus('idle'), 3000);
+      } else {
+        setNewsletterStatus('error');
+      }
+    } catch {
+      setNewsletterStatus('error');
+    }
+  };
+
   return (
     <footer style={{ background: '#050810' }} className="border-t border-brand-border/30">
       {/* Newsletter Strip */}
@@ -37,15 +68,29 @@ export default function Footer() {
                 Get longevity insights <span className="gradient-text">delivered weekly</span>
               </h3>
             </div>
-            <form className="flex w-full md:w-auto gap-2">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="input w-full md:w-72"
-              />
-              <button type="submit" className="btn-primary whitespace-nowrap">
-                Subscribe <ArrowRight size={15} />
-              </button>
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col w-full md:w-auto gap-2">
+              <div className="flex w-full md:w-auto gap-2">
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  required
+                  className="input w-full md:w-72"
+                />
+                <button type="submit" disabled={newsletterStatus === 'loading'} className="btn-primary whitespace-nowrap">
+                  {newsletterStatus === 'loading' ? 'Subscribing…' : <>Subscribe <ArrowRight size={15} /></>}
+                </button>
+              </div>
+              {newsletterStatus === 'success' && (
+                <p className="text-xs text-brand-cyan">Thanks for subscribing!</p>
+              )}
+              {newsletterStatus === 'error' && (
+                <p className="text-xs text-red-400">Subscription failed. Please try again.</p>
+              )}
+              {newsletterStatus === 'idle' && (
+                <p className="text-xs text-brand-muted">We respect your privacy. Unsubscribe at any time.</p>
+              )}
             </form>
           </div>
         </div>
@@ -67,12 +112,20 @@ export default function Footer() {
               <a href="mailto:hello@maxlifemd.com" className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors">
                 <Mail size={14} className="text-brand-cyan" /> hello@maxlifemd.com
               </a>
-              <a href="tel:+18005551234" className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors">
-                <Phone size={14} className="text-brand-cyan" /> 1-800-555-1234
+              <a href="tel:+17324843000" className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors">
+                <Phone size={14} className="text-brand-cyan" /> 732-484-3000
               </a>
               <span className="flex items-center gap-2 text-sm text-brand-muted">
                 <MapPin size={14} className="text-brand-cyan" /> United States (Nationwide)
               </span>
+            </div>
+            <div className="flex gap-4 mt-4">
+              <a href="#" className="text-brand-cyan hover:text-white transition-colors">
+                <Facebook size={18} />
+              </a>
+              <a href="#" className="text-brand-cyan hover:text-white transition-colors">
+                <Instagram size={18} />
+              </a>
             </div>
           </div>
 
